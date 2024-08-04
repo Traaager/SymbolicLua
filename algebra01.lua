@@ -8,6 +8,24 @@ Polynomial.__index = Polynomial
 ---@param variable string
 ---@param power integer
 function Monomial:new(coefficient, variable, power)
+  if coefficient == 0 then
+    return setmetatable({
+      coefficient = 0,
+      variable    = nil,
+      power       = 1,
+      sign        = coefficient > 0 and "+" or "-"
+     }, Monomial)
+  end
+
+  if not variable then
+    return setmetatable({
+      coefficient = coefficient,
+      variable    = nil,
+      power       = 1,
+      sign        = coefficient > 0 and "+" or "-"
+     }, Monomial)
+  end
+
   local mon = {
     coefficient = coefficient,
     variable    = variable,
@@ -72,10 +90,28 @@ end
 
 function Polynomial:toString()
   local result = ""
-  for _, m in pairs(self.monomials) do
+  for i, m in pairs(self.monomials) do
+    if i == 1 then
+      goto continue
+    end
+    result = result .. " " .. m.sign .. " "
+    ::continue::
     result = result .. m:toString()
   end
   return result
+end
+
+function Polynomial:addMonomial(monomial)
+  for _, m in ipairs(self.monomials) do
+    if m.variable == monomial.variable then
+      if m.power == monomial.power then
+        m.coefficient = m.coefficient + monomial.coefficient
+        return self
+      end
+    end
+  end
+  self.monomials[#self.monomials+1] = monomial
+  return self
 end
 
 function Polynomial:fromString(str)
@@ -124,22 +160,18 @@ function getListOfMonomials(expr)
 end
 
 -- tests
-monomials = {
-  Monomial:new( 1, "x", 0),
-  Monomial:new(-1, "x", 0),
-  Monomial:new( 2, "x", 0),
-  Monomial:new(-2, "x", 0),
-  Monomial:new( 1, "x", 1),
-  Monomial:new(-1, "x", 1),
-  Monomial:new( 2, "x", 1),
-  Monomial:new(-2, "x", 1),
-  Monomial:new( 1, "x", 2),
-  Monomial:new(-1, "x", 2),
-  Monomial:new( 2, "x", 2),
-  Monomial:new(-2, "x", 2),
-  Monomial:new( 0, "x", 2),
-}
+first  = Monomial:new( 2, "x", 3)
+second = Monomial:new( 7, "x", 2)
+third  = Monomial:new(10, "x", 3)
+fourth = Monomial:new( 3, "y", 3)
+fifth  = Monomial:new( 2, "y", 3)
 
-for i = 1, #monomials do
-  print(i..": "..monomials[i]:toString())
-end
+summa1 = first:add(second)
+summa2 = first:add(third)
+summa3 = first:add(fourth)
+
+print(first:toString())
+print(second:toString())
+print(fourth:toString())
+print(fifth:toString())
+print(first:add(second):addMonomial(fourth):addMonomial(fifth):toString())
