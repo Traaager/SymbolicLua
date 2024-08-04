@@ -4,9 +4,6 @@ Monomial.__index = Monomial
 Polynomial = {}
 Polynomial.__index = Polynomial
 
----@param coefficient integer
----@param variable string
----@param power integer
 function Monomial:new(coefficient, variable, power)
   if coefficient == 0 then
     return setmetatable({
@@ -83,7 +80,20 @@ function Monomial:sub(other)
       return Monomial:new(self.coefficient - other.coefficient, self.variable, self.power)
     end
   end
-  return Polynomial:new({self, other})
+  return Polynomial:new({self, other:mul(-1)})
+end
+
+function Monomial:mul(n)
+  if n ~= 0 then
+    self.coefficient = self.coefficient * n
+    self.sign = n > 0 and "+" or "-"
+  end
+  self.coefficient = 0
+  self.variable    = nil
+  self.power       = 1
+  return self
+  
+
 end
 
 function Polynomial:new(listOfMonomials)
@@ -178,20 +188,3 @@ function getListOfMonomials(expr)
   result[#result+1] = monomial
   return result
 end
-
--- tests
-first  = Monomial:new( 2, "x", 3)
-second = Monomial:new( 7, "x", 2)
-third  = Monomial:new(10, "x", 3)
-fourth = Monomial:new( 3, "y", 3)
-fifth  = Monomial:new( 2, "y", 3)
-
-summa1 = first:add(second)
-summa2 = first:add(third)
-summa3 = first:add(fourth)
-
-print(first:toString())
-print(second:toString())
-print(fourth:toString())
-print(fifth:toString())
-print(first:add(second):addMonomial(fourth):addMonomial(fifth):toString())
