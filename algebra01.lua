@@ -11,13 +11,42 @@ function Monomial:new(coefficient, variable, power)
   local mon = {
     coefficient = coefficient,
     variable    = variable,
-    power       = power
+    power       = power,
+    sign        = coefficient > 0 and "+" or "-"
   }
   return setmetatable(mon, Monomial)
 end
 
 function Monomial:toString()
-  return tostring(self.coefficient)..self.variable.."^"..tostring(self.power)
+  if self.coefficient == 0 then
+    return ""
+  else
+    if self.coefficient == 1 then
+      if self.power == 0 then
+        return "1"
+      elseif self.power == 1 then
+        return self.variable
+      else
+        return self.variable.."^"..tostring(self.power)
+      end
+    elseif self.coefficient == -1 then
+      if self.power == 0 then
+        return "-1"
+      elseif self.power == 1 then
+        return "-"..self.variable
+      else
+        return "-"..self.variable.."^"..tostring(self.power)
+      end
+    else
+      if self.power == 0 then
+        return tostring(self.coefficient) 
+      elseif self.power == 1 then
+        return tostring(self.coefficient)..self.variable
+      else
+        return tostring(self.coefficient)..self.variable.."^"..tostring(self.power)
+      end
+    end
+  end
 end
 
 
@@ -31,11 +60,26 @@ function Monomial:add(other)
 end
 
 function Polynomial:new(listOfMonomials)
-  local poly = {}
+  local poly = {
+    monomials = {}
+  }
+  local mons = poly.monomials
   for i = 1, #listOfMonomials do
-    poly[#poly+1] = listOfMonomials[i]
+    mons[#mons+1] = listOfMonomials[i]
   end
   return setmetatable(poly, Polynomial)
+end
+
+function Polynomial:toString()
+  local result = ""
+  for _, m in pairs(self.monomials) do
+    result = result .. m:toString()
+  end
+  return result
+end
+
+function Polynomial:fromString(str)
+
 end
 
 
@@ -80,6 +124,22 @@ function getListOfMonomials(expr)
 end
 
 -- tests
-first = Monomial:new(5, "x", 3)
-second = Monomial:new(1, "x", 2)
-print(first:toString())
+monomials = {
+  Monomial:new( 1, "x", 0),
+  Monomial:new(-1, "x", 0),
+  Monomial:new( 2, "x", 0),
+  Monomial:new(-2, "x", 0),
+  Monomial:new( 1, "x", 1),
+  Monomial:new(-1, "x", 1),
+  Monomial:new( 2, "x", 1),
+  Monomial:new(-2, "x", 1),
+  Monomial:new( 1, "x", 2),
+  Monomial:new(-1, "x", 2),
+  Monomial:new( 2, "x", 2),
+  Monomial:new(-2, "x", 2),
+  Monomial:new( 0, "x", 2),
+}
+
+for i = 1, #monomials do
+  print(i..": "..monomials[i]:toString())
+end
