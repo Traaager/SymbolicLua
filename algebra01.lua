@@ -77,6 +77,15 @@ function Monomial:add(other)
   return Polynomial:new({self, other})
 end
 
+function Monomial:sub(other)
+  if self.variable == other.variable then
+    if self.power == other.power then
+      return Monomial:new(self.coefficient - other.coefficient, self.variable, self.power)
+    end
+  end
+  return Polynomial:new({self, other})
+end
+
 function Polynomial:new(listOfMonomials)
   local poly = {
     monomials = {}
@@ -101,6 +110,11 @@ function Polynomial:toString()
   return result
 end
 
+function Polynomial:combineLikeTerms()
+  -- TODO
+
+end
+
 function Polynomial:addMonomial(monomial)
   for _, m in ipairs(self.monomials) do
     if m.variable == monomial.variable then
@@ -114,7 +128,13 @@ function Polynomial:addMonomial(monomial)
   return self
 end
 
+function Polynomial:addPolynomial(polynomial)
+  -- TODO
+
+end
+
 function Polynomial:fromString(str)
+  -- TODO
 
 end
 
