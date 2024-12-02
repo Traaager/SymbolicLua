@@ -54,7 +54,7 @@ function Monomial:toString()
       end
     else
       if self.power == 0 then
-        return tostring(self.coefficient) 
+        return tostring(self.coefficient)
       elseif self.power == 1 then
         return tostring(self.coefficient)..self.variable
       else
@@ -92,7 +92,6 @@ function Monomial:mul(n)
   self.variable    = nil
   self.power       = 1
   return self
-  
 
 end
 
@@ -147,13 +146,6 @@ function Polynomial:fromString(str)
   -- TODO
 
 end
-
-
-
-
-
-
-
 
 
 function removeSpaces(polynomial)
